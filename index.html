@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+<!-- <h2 id="clientIdHeader"></h2>
+<hr/> -->
+<h3>Send data</h3>
+<div>
+  <input type="text" id="text" value="Hello World"></input>
+  <button id="send">SEND</button>
+</div>
+<hr/>
+<h3>Received data from topic "irtest" </h3>
+<div id="received">
+  <ul id="list">
+  </ul>
+</div>
+<hr>
+<script>
+  let mqtturl = 'mqtt://0413fa44:1f7cf32d53a6b321@broker.shiftr.io';
+  let options = {
+    clientId: 'enoki',
+    // 'Browser-'+Math.floor(Math.random() * 100) // ID Example: "Browser-23"
+  }
+  let topic = 'testtopichogehoge';
+  // $("#clientIdHeader").text('Client ID: '+options.clientId);
+  console.log('clientId: ' + options.clientId);
+  console.log('connecting to: ' + mqtturl);
+  let client = mqtt.connect(mqtturl, options);
+  client.on('connect', function(){
+    console.log('connected.');
+    client.subscribe(topic, function(err, granted) {
+      if (err) {
+        console.log('subscribe failed:', err);
+      } else {
+        console.log('subscribe succeeded');
+      }
+    });
+  });
+  // message受信時の動作:
+  client.on('message', function(topic, message){
+      console.log('subscriber.on.message', 'topic:', topic, 'message:', message);
+      $("#list").prepend("<li>"+message.toString()+"</li>");
+  });
+  // ボタンクリック時の動作:
+  $("#send").on("click", function(){
+    client.publish(topic, $("#text").val());
+  });
+</script>
+</body>
+</html>
